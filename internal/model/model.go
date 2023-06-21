@@ -1,7 +1,13 @@
 package model
 
 import (
+	"errors"
 	"time"
+)
+
+var (
+	ErrNotFound = errors.New("Not found")
+	ErrAlreadyExist = errors.New("ID already exists")
 )
 
 type Order struct {
