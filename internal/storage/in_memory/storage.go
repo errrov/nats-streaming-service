@@ -1,6 +1,9 @@
 package inMemoryStorage
 
-import "wildberries_L0/internal/model"
+import (
+	"log"
+	"wildberries_L0/internal/model"
+)
 
 type MemoryStorage struct {
 	MemoryMap map[string]*model.Order
@@ -17,5 +20,12 @@ func (ms *MemoryStorage) Add(order *model.Order) error {
 		return model.ErrAlreadyExist
 	}
 	ms.MemoryMap[order.OrderUID] = order
+	return nil
+}
+
+func (ms *MemoryStorage) ListAll() error {
+	for k, _ := range ms.MemoryMap {
+		log.Println("Key:", k)
+	}
 	return nil
 }

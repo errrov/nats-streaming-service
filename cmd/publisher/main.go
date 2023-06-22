@@ -3,10 +3,7 @@ package main
 import (
 	"encoding/json"
 	"log"
-	"reflect"
 	"wildberries_L0/internal/broker"
-
-	"fmt"
 	"os"
 	"wildberries_L0/internal/model"
 )
@@ -26,14 +23,19 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error unmarshaling JSON: %v", err)
 	}
-	fmt.Println(sendOrder)
-
 	sendOrder.OrderUID = "ABCDTESTING123"
 	sendingData, err := json.Marshal(sendOrder)
 	if err != nil {
 		log.Fatalf("Error marshalling order %v", err)
 	}
-	fmt.Println(reflect.TypeOf(sendingData))
+	if err = sc.Publish("testing", sendingData); err != nil {
+		log.Fatalf("Error sending Order %v", err)
+	}
+	sendOrder.OrderUID = "AAAAA"
+	sendingData, err = json.Marshal(sendOrder)
+	if err != nil {
+		log.Fatalf("Error marshalling order %v", err)
+	}
 	if err = sc.Publish("testing", sendingData); err != nil {
 		log.Fatalf("Error sending Order %v", err)
 	}
