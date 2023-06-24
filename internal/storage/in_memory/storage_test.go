@@ -100,3 +100,30 @@ func TestSameUID(t *testing.T) {
 		t.Errorf("Error with rejecting adding of the same UID %v", err)
 	}
 }
+
+func TestFindByUID(t *testing.T) {
+	TestMemoryStorage := NewInMemory()
+	var testOrder model.Order
+	var gotOrder *model.Order
+	err := json.Unmarshal([]byte(testJSON), &testOrder)
+	if err != nil {
+		t.Errorf("Error unmarshalling json (%v)", err)
+	}
+	err = TestMemoryStorage.Add(&testOrder)
+	if err != nil {
+		t.Errorf("Error adding to map, %v", err)
+	}
+	gotOrder, err = TestMemoryStorage.FindByUID(testOrder.OrderUID)
+	if err != nil {
+		t.Errorf("Error with finding by UID %v", err)
+	}
+	if gotOrder.OrderUID != testOrder.OrderUID {
+		t.Errorf("Orders are not the same. Got %v, want %v", *gotOrder, testOrder)
+	}
+
+	_, err = TestMemoryStorage.FindByUID("abcd")
+	if err != model.ErrNotFound {
+		t.Errorf("Wanted error not found, got %v", err)
+	}
+}
+

@@ -15,7 +15,6 @@ type ConnectionInfo struct {
 	Host     string
 	Port     string
 	Name     string
-	Sslmode  string
 }
 
 type Postgresql struct {

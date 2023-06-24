@@ -41,10 +41,10 @@ func main() {
 			return
 		}
 		if err = cache.Add(&Order); err != nil {
-			log.Printf("Error adding order: %v", err)
+			log.Printf("Error adding order: %v with orderUID %v", err, Order.OrderUID)
 			return
 		}
-		log.Println("Got orderUID and added to cache", Order)
+		log.Println("Got orderUID and added to cache", Order.OrderUID)
 	}, stan.SetManualAckMode())
 	defer sub.Close()
 	<-cleanupDone
