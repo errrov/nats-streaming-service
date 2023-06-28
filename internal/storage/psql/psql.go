@@ -1,12 +1,16 @@
 package psql
 
 import (
-	//"wildberries_L0/internal/model"
-	"log"
-	"github.com/jackc/pgx/v5/pgxpool"
-	"os"
-	"fmt"
 	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+
+	//"os"
+	"wildberries_L0/internal/config"
+	"wildberries_L0/internal/model"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type ConnectionInfo struct {
@@ -18,17 +22,8 @@ type ConnectionInfo struct {
 }
 
 type Postgresql struct {
-	ConnectionString ConnectionInfo
+	ConnectionString config.PostgresConfig
 	Db               *pgxpool.Pool
-}
-
-func InitConnectionInfo() ConnectionInfo {
-	User := os.Getenv("POSTGRES_USER")
-	Password := os.Getenv("POSTGRES_PASSWORD")
-	Host := "postgres"
-	Port := "5432"
-	Name := os.Getenv("POSTGRES_DB")
-	return ConnectionInfo{User: User, Password: Password, Host: Host, Port: Port, Name: Name}
 }
 
 func (d *Postgresql) connect() {
@@ -44,10 +39,51 @@ func (d *Postgresql) connect() {
 	d.Db = dpPool
 }
 
-func Connect(d ConnectionInfo) *Postgresql {
+func Connect() *Postgresql {
+	d := config.InitPsqlConfig()
 	var newPsqlconnection Postgresql
 	newPsqlconnection.ConnectionString = d
 	newPsqlconnection.connect()
-	log.Println("Connected")
+	log.Println("Created connection")
 	return &newPsqlconnection
+}
+
+func (d *Postgresql) InsertOrder(order *model.Order) error {
+	orderQueue := `INSERT INTO ORDERS VALUES ($1, $2)`
+	json, err := json.Marshal(*order)
+	if err != nil {
+		return err
+	}
+	_, err = d.Db.Exec(context.Background(), orderQueue, order.OrderUID, json)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (d *Postgresql) FindByUID(uid string) (*model.Order, error) {
+	sql := `SELECT order_data::jsonb FROM orders WHERE order_uid=$1`
+	var searchingOrder model.Order
+	err := d.Db.QueryRow(context.Background(), sql, uid).Scan(&searchingOrder)
+	if err != nil {
+		return nil, err
+	}
+	return &searchingOrder, nil
+}
+
+func (d *Postgresql) FindAll() (map[string]*model.Order, error) {
+	orders := make(map[string]*model.Order)
+	rows, err := d.Db.Query(context.Background(), "select * from orders")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var uid string
+		var searchOrder model.Order
+		rows.Scan(&uid, &searchOrder)
+		orders[uid] = &searchOrder
+	}
+	return orders, nil
 }

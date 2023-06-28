@@ -8,17 +8,22 @@ import (
 	"os/signal"
 	"wildberries_L0/internal/broker"
 	"wildberries_L0/internal/model"
-	inMemoryStorage "wildberries_L0/internal/storage/in_memory"
+	"wildberries_L0/internal/storage"
 
 	"github.com/nats-io/stan.go"
 )
 
 func main() {
 	sc, err := broker.ConnectToNats("test-cluster", "order-subscriber")
+	l := log.New(os.Stdout, "nats-subscriber ", log.LstdFlags)
 	if err != nil {
 		log.Println(err)
 	}
-	cache := inMemoryStorage.NewInMemory()
+	storage, err := storage.StorageInit(l)
+	defer storage.Postgres.Db.Close()
+	if err != nil {
+		l.Printf("Got error init storage: %v", err)
+	}
 	var Order model.Order
 	log.Printf("Connected")
 	signalChan := make(chan os.Signal, 1)
@@ -40,7 +45,7 @@ func main() {
 			log.Println(err)
 			return
 		}
-		if err = cache.Add(&Order); err != nil {
+		if err = storage.AddToStorage(&Order); err != nil {
 			log.Printf("Error adding order: %v with orderUID %v", err, Order.OrderUID)
 			return
 		}

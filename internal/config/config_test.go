@@ -13,8 +13,8 @@ func TestPsqlDefaultConfig(t *testing.T) {
 		Port:     "5432",
 		Name:     "postgres",
 	}
-	if *gotConfig != wantConfig {
-		t.Errorf("Basic POSTGRES config creation is wrong, got: %v, want: %v", *gotConfig, wantConfig)
+	if gotConfig != wantConfig {
+		t.Errorf("Basic POSTGRES config creation is wrong, got: %v, want: %v", gotConfig, wantConfig)
 	}
 }
 

@@ -126,4 +126,3 @@ func TestFindByUID(t *testing.T) {
 		t.Errorf("Wanted error not found, got %v", err)
 	}
 }
-

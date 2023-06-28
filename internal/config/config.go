@@ -20,7 +20,7 @@ type NatsConfig struct {
 	Subject      string
 }
 
-func InitPsqlConfig() *PostgresConfig {
+func InitPsqlConfig() PostgresConfig {
 	User, exist := os.LookupEnv("POSTGRES_USER")
 	if !exist {
 		log.Println("[config] COULDN'T FIND POSTGRES USER, USING DEFAULT postgres")
@@ -46,7 +46,7 @@ func InitPsqlConfig() *PostgresConfig {
 		log.Println("[config] COULDN'T FIND POSTGRES NAME, USING DEFAULT POSTGRES")
 		Name = "postgres"
 	}
-	return &PostgresConfig{
+	return PostgresConfig{
 		User:     User,
 		Password: Password,
 		Host:     Host,
