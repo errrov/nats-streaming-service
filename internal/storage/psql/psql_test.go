@@ -62,6 +62,7 @@ var jStr = `
 
 func TestConnection(t *testing.T) {
 	dpPool := Connect()
+	log.Println(dpPool.ConnectionString)
 	defer dpPool.Db.Close()
 	if err := dpPool.Db.Ping(context.Background()); err != nil {
 		t.Errorf("Error pinging db %v", err)

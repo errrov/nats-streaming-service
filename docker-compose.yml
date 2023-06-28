@@ -1,0 +1,26 @@
+services:
+
+  postgres:
+    container_name: postgres
+    hostname: postgres
+    image: postgres:latest
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: 'postgres'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgrespw'
+    volumes: 
+      - postgres:/var/lib/postgresql/data
+
+  nats:
+    container_name: nats
+    image: nats-streaming:latest
+    ports:
+      - "4222:4222"
+    restart: always
+
+volumes:
+  postgres:
+    driver: local

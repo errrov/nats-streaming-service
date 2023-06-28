@@ -28,8 +28,8 @@ func InitPsqlConfig() PostgresConfig {
 	}
 	Password, exist := os.LookupEnv("POSTGRES_PASSWORD")
 	if !exist {
-		log.Println("[config] COULDN'T FIND POSTGRES PASSWORD, USING DEFAULT postgres")
-		Password = "postgres"
+		log.Println("[config] COULDN'T FIND POSTGRES PASSWORD, USING DEFAULT postgrespw")
+		Password = "postgrespw"
 	}
 	Host, exist := os.LookupEnv("POSTGRES_HOST")
 	if !exist {
@@ -41,9 +41,9 @@ func InitPsqlConfig() PostgresConfig {
 		log.Println("[config] COULDN'T FIND POSTGRES PORT, USING DEFAULT 5432")
 		Port = "5432"
 	}
-	Name, exist := os.LookupEnv("POSTGRES_NAME")
+	Name, exist := os.LookupEnv("POSTGRES_DB")
 	if !exist {
-		log.Println("[config] COULDN'T FIND POSTGRES NAME, USING DEFAULT POSTGRES")
+		log.Println("[config] COULDN'T FIND POSTGRES NAME, USING DEFAULT postgres")
 		Name = "postgres"
 	}
 	return PostgresConfig{

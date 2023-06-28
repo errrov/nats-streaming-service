@@ -41,11 +41,25 @@ func (d *Postgresql) connect() {
 
 func Connect() *Postgresql {
 	d := config.InitPsqlConfig()
+	log.Println(fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s", d.User, d.Password, d.Host, d.Port, d.Name))
 	var newPsqlconnection Postgresql
 	newPsqlconnection.ConnectionString = d
 	newPsqlconnection.connect()
+	err := newPsqlconnection.EnsureTableExists()
+	if err != nil {
+		return nil
+	}
 	log.Println("Created connection")
 	return &newPsqlconnection
+}
+
+func (d *Postgresql) EnsureTableExists() error {
+	_, err := d.Db.Exec(context.Background(), `CREATE TABLE IF NOT EXISTS orders(
+		order_uid varchar PRIMARY KEY,
+		order_data jsonb NOT NULL
+	)`)
+	log.Println("Creating table", err)
+	return err
 }
 
 func (d *Postgresql) InsertOrder(order *model.Order) error {

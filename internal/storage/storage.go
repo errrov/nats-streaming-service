@@ -14,8 +14,11 @@ type Storage struct {
 }
 
 func StorageInit(logger *log.Logger) (*Storage, error) {
+	logger.Println("Trying to create connection to postgres")
 	postgres := psql.Connect()
+	logger.Println("Created connection to postgres")
 	cache, err := postgres.FindAll()
+	logger.Println("Found all", cache, err)
 	if err != nil {
 		return nil, err
 	}
