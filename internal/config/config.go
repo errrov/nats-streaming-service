@@ -20,30 +20,30 @@ type NatsConfig struct {
 	Subject      string
 }
 
-func InitPsqlConfig() PostgresConfig {
+func InitPsqlConfig(l *log.Logger) PostgresConfig {
 	User, exist := os.LookupEnv("POSTGRES_USER")
 	if !exist {
-		log.Println("[config] COULDN'T FIND POSTGRES USER, USING DEFAULT postgres")
+		l.Println("couldn't find postgres user, using default [postgres]")
 		User = "postgres"
 	}
 	Password, exist := os.LookupEnv("POSTGRES_PASSWORD")
 	if !exist {
-		log.Println("[config] COULDN'T FIND POSTGRES PASSWORD, USING DEFAULT postgrespw")
+		l.Println("couldn't find postgres password, using default [postgrespw]")
 		Password = "postgrespw"
 	}
 	Host, exist := os.LookupEnv("POSTGRES_HOST")
 	if !exist {
-		log.Println("[config] COULDN'T FIND POSTGRES HOST, USING DEFAULT localhost")
+		l.Println("couldn't find postgres host, using default [localhost]")
 		Host = "localhost"
 	}
 	Port, exist := os.LookupEnv("POSTGRES_PORT")
 	if !exist {
-		log.Println("[config] COULDN'T FIND POSTGRES PORT, USING DEFAULT 5432")
+		l.Println("couldn't find postgres port, using default [5432]")
 		Port = "5432"
 	}
 	Name, exist := os.LookupEnv("POSTGRES_DB")
 	if !exist {
-		log.Println("[config] COULDN'T FIND POSTGRES NAME, USING DEFAULT postgres")
+		l.Println("couldn't find postgres name, using default [postgres]")
 		Name = "postgres"
 	}
 	return PostgresConfig{
@@ -55,28 +55,28 @@ func InitPsqlConfig() PostgresConfig {
 	}
 }
 
-func InitNatsConfig() *NatsConfig {
+func InitNatsConfig(l *log.Logger) *NatsConfig {
 	clusterId, exist := os.LookupEnv("NATS_CLUSTERID")
 	if !exist {
-		log.Println("[config] COULDN'T FIND NATS CLUSTER ID USING DEFAULT test-cluster")
+		l.Println("couldn't find nats cluster id using default [test-cluster]")
 		clusterId = "test-cluster"
 	}
 
 	publishedID, exist := os.LookupEnv("NATS_PUBLISHER")
 	if !exist {
-		log.Println("[config] COULDN'T FIND NATS PUBLISHER ID USING DEFAULT order-publisher")
+		l.Println("couldn't find nats publisher id using default [order-publisher]")
 		publishedID = "order-publisher"
 	}
 
 	subscriberID, exist := os.LookupEnv("NATS_SUBSCRIBER")
 	if !exist {
-		log.Println("[config] COULDN'T FIND NATS SUBSCRIBER ID USING DEFAULT order-subscriber")
+		l.Println("couldn't find nats subscriber id using default order-subscriber")
 		subscriberID = "order-subscriber"
 	}
 
 	subject, exist := os.LookupEnv("NATS_SUBJECT")
 	if !exist {
-		log.Println("[config] COULDN'T FIND NATS SUBJECT USING DEFAULT orders")
+		l.Println("couldn't find nats subject using default orders")
 		subject = "orders"
 	}
 

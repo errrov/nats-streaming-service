@@ -1,11 +1,14 @@
 package config
 
 import (
+	"log"
 	"testing"
+	"os"
 )
 
 func TestPsqlDefaultConfig(t *testing.T) {
-	gotConfig := InitPsqlConfig()
+	l := log.New(os.Stdout, "testing", log.LstdFlags)
+	gotConfig := InitPsqlConfig(l)
 	wantConfig := PostgresConfig{
 		User:     "postgres",
 		Password: "postgres",
@@ -19,7 +22,8 @@ func TestPsqlDefaultConfig(t *testing.T) {
 }
 
 func TestNatsDefaultConfig(t *testing.T) {
-	gotConfig := InitNatsConfig()
+	l := log.New(os.Stdout, "testing", log.LstdFlags)
+	gotConfig := InitNatsConfig(l)
 	wantConfig := NatsConfig{
 		ClusterID: "test-cluster",
 		PublsherID: "order-publisher",

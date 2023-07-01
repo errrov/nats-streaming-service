@@ -4,8 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"os"
+	"nats-streaming-service/internal/model"
 	"testing"
-	"wildberries_L0/internal/model"
 )
 
 var jStr = `
@@ -61,8 +62,11 @@ var jStr = `
 `
 
 func TestConnection(t *testing.T) {
-	dpPool := Connect()
-	log.Println(dpPool.ConnectionString)
+	l := log.New(os.Stdout, "testing", log.LstdFlags)
+	dpPool, err := Connect(l)
+	if err != nil {
+		t.Fatalf("Error connecting to db %v", err)
+	}
 	defer dpPool.Db.Close()
 	if err := dpPool.Db.Ping(context.Background()); err != nil {
 		t.Errorf("Error pinging db %v", err)
@@ -70,10 +74,14 @@ func TestConnection(t *testing.T) {
 }
 
 func TestInsertOrder(t *testing.T) {
-	dpPool := Connect()
+	l := log.New(os.Stdout, "testing", log.LstdFlags)
+	dpPool, err := Connect(l)
+	if err != nil {
+		t.Fatalf("Error connecting to db %v", err)
+	}
 	defer dpPool.Db.Close()
 	testOrder := &model.Order{}
-	err := json.Unmarshal([]byte(jStr), testOrder)
+	err = json.Unmarshal([]byte(jStr), testOrder)
 	if err != nil {
 		t.Errorf("Error unmarshalling json (%v)", err)
 	}
@@ -83,21 +91,27 @@ func TestInsertOrder(t *testing.T) {
 }
 
 func TestFindByUID(t *testing.T) {
-	dpPool := Connect()
+	l := log.New(os.Stdout, "testing", log.LstdFlags)
+	dpPool, err := Connect(l)
+	if err != nil {
+		t.Fatalf("Error connecting to db %v", err)
+	}
 	defer dpPool.Db.Close()
-	testOrder, err := dpPool.FindByUID("b563feb7b2b84b6test")
+	_, err = dpPool.FindByUID("b563feb7b2b84b6test")
 	if err != nil {
 		t.Errorf("Error while searching : %v", err)
 	}
-	log.Println(*testOrder)
 }
 
 func TestFindAll(t *testing.T) {
-	dpPool := Connect()
+	l := log.New(os.Stdout, "testing", log.LstdFlags)
+	dpPool, err := Connect(l)
+	if err != nil {
+		t.Fatalf("Error connecting to db %v", err)
+	}
 	defer dpPool.Db.Close()
-	m1, err := dpPool.FindAll()
+	_, err = dpPool.FindAll()
 	if err != nil {
 		t.Errorf("error scanning rows %v", err)
 	}
-	log.Println(m1)
 }

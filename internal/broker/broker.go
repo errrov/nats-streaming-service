@@ -21,11 +21,11 @@ type SubscriberInfo struct {
 }
 
 func ConnectToNats(ClusterId, ClientID string) (stan.Conn, error) {
-	sc, err := stan.Connect(ClusterId, ClientID)
+	conn, err := stan.Connect(ClusterId, ClientID)
 	if err != nil {
 		log.Println("Couldn't connect to Nats")
 		return nil, err
 	}
 	log.Println("Connected to NATS")
-	return sc, nil
+	return conn, nil
 }

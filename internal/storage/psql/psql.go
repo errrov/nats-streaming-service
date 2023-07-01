@@ -5,10 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-
-	//"os"
-	"wildberries_L0/internal/config"
-	"wildberries_L0/internal/model"
+	"nats-streaming-service/internal/config"
+	"nats-streaming-service/internal/model"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -26,31 +24,33 @@ type Postgresql struct {
 	Db               *pgxpool.Pool
 }
 
-func (d *Postgresql) connect() {
+func (d *Postgresql) connect() error {
 	connectionStr := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s", d.ConnectionString.User, d.ConnectionString.Password, d.ConnectionString.Host, d.ConnectionString.Port, d.ConnectionString.Name)
 	cfg, err := pgxpool.ParseConfig(connectionStr)
 	if err != nil {
-		log.Panic(err)
+		return err
 	}
 	dpPool, err := pgxpool.NewWithConfig(context.Background(), cfg)
 	if err != nil {
-		log.Panic(err)
+		return err
 	}
 	d.Db = dpPool
+	return nil
 }
 
-func Connect() *Postgresql {
-	d := config.InitPsqlConfig()
-	log.Println(fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s", d.User, d.Password, d.Host, d.Port, d.Name))
+func Connect(l *log.Logger) (*Postgresql, error) {
+	d := config.InitPsqlConfig(l)
 	var newPsqlconnection Postgresql
 	newPsqlconnection.ConnectionString = d
-	newPsqlconnection.connect()
-	err := newPsqlconnection.EnsureTableExists()
+	err := newPsqlconnection.connect()
 	if err != nil {
-		return nil
+		return nil, err
 	}
-	log.Println("Created connection")
-	return &newPsqlconnection
+	err = newPsqlconnection.EnsureTableExists()
+	if err != nil {
+		return nil, err
+	}
+	return &newPsqlconnection, nil
 }
 
 func (d *Postgresql) EnsureTableExists() error {
@@ -58,7 +58,6 @@ func (d *Postgresql) EnsureTableExists() error {
 		order_uid varchar PRIMARY KEY,
 		order_data jsonb NOT NULL
 	)`)
-	log.Println("Creating table", err)
 	return err
 }
 
@@ -93,9 +92,9 @@ func (d *Postgresql) FindAll() (map[string]*model.Order, error) {
 	}
 	defer rows.Close()
 
+	var uid string
+	var searchOrder model.Order
 	for rows.Next() {
-		var uid string
-		var searchOrder model.Order
 		rows.Scan(&uid, &searchOrder)
 		orders[uid] = &searchOrder
 	}

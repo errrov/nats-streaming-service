@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"wildberries_L0/internal/broker"
-	"wildberries_L0/internal/model"
+	"nats-streaming-service/internal/broker"
+	"nats-streaming-service/internal/model"
 )
 
 func main() {
@@ -25,7 +25,7 @@ func main() {
 		log.Fatalf("Error unmarshaling JSON: %v", err)
 	}
 	for i := 0; i < 10; i++ {
-		sendOrder.OrderUID = fmt.Sprintf("TEST%d", i)
+		sendOrder.OrderUID = fmt.Sprintf("TEST2%d", i)
 		sendingData, err := json.Marshal(sendOrder)
 		if err != nil {
 			log.Fatalf("Error marshalling order %v", err)

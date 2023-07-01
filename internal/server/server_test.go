@@ -3,17 +3,19 @@ package server
 import (
 	"encoding/json"
 	"log"
+	"os"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"wildberries_L0/internal/model"
+	"nats-streaming-service/internal/model"
 )
 
 func TestRequest(t *testing.T) {
 	recorder := httptest.NewRecorder()
+	l := log.New(os.Stdout, "testing", log.LstdFlags)
 	request, _ := http.NewRequest("GET", "/order/a", nil)
-	server := NewServer()
-	server.MemCache.Add(&model.Order{OrderUID: "a"})
+	server := NewServer(l)
+	server.Cache.AddToStorage(&model.Order{OrderUID: "a"})
 	var order model.Order
 	server.Srv.Handler.ServeHTTP(recorder, request)
 	if recorder.Code != http.StatusOK {
@@ -26,8 +28,9 @@ func TestRequest(t *testing.T) {
 
 func TestNotFoundRequest(t *testing.T) {
 	recorder := httptest.NewRecorder()
+	l := log.New(os.Stdout, "testing", log.LstdFlags)
 	request, _ := http.NewRequest("GET", "/order/a", nil)
-	server := NewServer()
+	server := NewServer(l)
 	server.Srv.Handler.ServeHTTP(recorder, request)
 	log.Println(recorder.Code)
 	if recorder.Code != http.StatusNotFound {
@@ -37,8 +40,9 @@ func TestNotFoundRequest(t *testing.T) {
 
 func TestRequestValid(t *testing.T) {
 	recorder := httptest.NewRecorder()
+	l := log.New(os.Stdout, "testing", log.LstdFlags)
 	request, _ := http.NewRequest("GET", "/order/ывы", nil)
-	server := NewServer()
+	server := NewServer(l)
 	server.Srv.Handler.ServeHTTP(recorder, request)
 	if recorder.Code != http.StatusNotFound {
 		t.Errorf("[TEST] http status is not OK, %v", recorder.Code)

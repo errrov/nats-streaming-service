@@ -1,4 +1,4 @@
-module wildberries_L0
+module nats-streaming-service
 
 go 1.20
 

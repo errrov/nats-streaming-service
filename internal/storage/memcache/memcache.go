@@ -1,8 +1,8 @@
-package inMemoryStorage
+package memcache
 
 import (
 	"log"
-	"wildberries_L0/internal/model"
+	"nats-streaming-service/internal/model"
 )
 
 type MemoryStorage struct {
@@ -19,7 +19,6 @@ func (ms *MemoryStorage) Add(order *model.Order) error {
 	if _, ok := ms.MemoryMap[order.OrderUID]; ok {
 		return model.ErrAlreadyExist
 	}
-	log.Println("Added to memory")
 	ms.MemoryMap[order.OrderUID] = order
 	return nil
 }
@@ -28,14 +27,12 @@ func (ms *MemoryStorage) FindByUID(uid string) (*model.Order, error) {
 	if order, ok := ms.MemoryMap[uid]; ok {
 		return order, nil
 	}
-	log.Println("Found in memory")
 	return nil, model.ErrNotFound
 }
 
-func (ms *MemoryStorage) ListAll() error {
+func (ms *MemoryStorage) ListAll() {
 	for k := range ms.MemoryMap {
-		log.Println("Key:", k)
+		log.Println(k)
 	}
-	log.Println("List all memory")
-	return nil
+
 }

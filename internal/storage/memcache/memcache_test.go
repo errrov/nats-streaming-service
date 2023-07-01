@@ -1,9 +1,9 @@
-package inMemoryStorage
+package memcache
 
 import (
 	"encoding/json"
 	"testing"
-	"wildberries_L0/internal/model"
+	"nats-streaming-service/internal/model"
 )
 
 var testJSON = `
