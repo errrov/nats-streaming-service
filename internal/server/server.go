@@ -18,7 +18,8 @@ type Server struct {
 	logger *log.Logger
 }
 
-func NewServer(l *log.Logger) *Server {
+func NewServer(l *log.Logger) (*Server, error) {
+	var err error
 	server := &Server{
 		Srv: &http.Server{
 			ErrorLog: log.New(os.Stdout, "subscriber-nats ", log.LstdFlags),
@@ -26,10 +27,13 @@ func NewServer(l *log.Logger) *Server {
 		},
 		logger: l,
 	}
-	server.Cache, _ = storage.StorageInit(l)
+	server.Cache, err = storage.StorageInit(l)
+	if err != nil {
+		return nil, err
+	}
 	server.Srv.Handler = server.SetupHandlers()
 	l.Println("Server created")
-	return server
+	return server, nil
 }
 
 func (s *Server) SetupHandlers() *mux.Router {

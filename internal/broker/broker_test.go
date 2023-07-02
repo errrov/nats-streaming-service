@@ -1,18 +1,24 @@
 package broker
 
 import (
+	"log"
+	"nats-streaming-service/internal/storage"
+	"nats-streaming-service/internal/storage/memcache"
+	"os"
 	"testing"
+
 	"github.com/nats-io/nats.go"
 )
 
-func TestPublisher(t *testing.T) {
-	sc, err := ConnectToNats("test-cluster", "order-publisher")
+func TestConnection(t *testing.T) {
+	l := log.New(os.Stdout, "testing", log.LstdFlags)
+	s := &storage.Storage{Mem_cache: memcache.MemoryStorage{MemoryMap: memcache.NewInMemory().MemoryMap}}
+	sub, err := CreateSubscriber(s, l)
 	if err != nil {
-		t.Fatalf("Error creating connection to NATS: %v", err)
+		t.Errorf("Error creating subscriber %v", err)
 	}
-	defer sc.Close()
-	if sc.NatsConn().Status() != nats.CONNECTED {
-		t.Errorf("Error connecting to NATS: %v", sc.NatsConn().Status())
+	defer sub.Conn.Close()
+	if sub.Conn.NatsConn().Status() != nats.CONNECTED {
+		t.Errorf("Not connected %v", sub.Conn.NatsConn().Status())
 	}
-
 }

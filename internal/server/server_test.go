@@ -3,18 +3,21 @@ package server
 import (
 	"encoding/json"
 	"log"
-	"os"
+	"nats-streaming-service/internal/model"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
-	"nats-streaming-service/internal/model"
 )
 
 func TestRequest(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	l := log.New(os.Stdout, "testing", log.LstdFlags)
 	request, _ := http.NewRequest("GET", "/order/a", nil)
-	server := NewServer(l)
+	server, err := NewServer(l)
+	if err != nil {
+		t.Fatalf("[TEST] error creating server")
+	}
 	server.Cache.AddToStorage(&model.Order{OrderUID: "a"})
 	var order model.Order
 	server.Srv.Handler.ServeHTTP(recorder, request)
@@ -30,7 +33,10 @@ func TestNotFoundRequest(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	l := log.New(os.Stdout, "testing", log.LstdFlags)
 	request, _ := http.NewRequest("GET", "/order/a", nil)
-	server := NewServer(l)
+	server, err := NewServer(l)
+	if err != nil {
+		t.Fatalf("[TEST] error creating server")
+	}
 	server.Srv.Handler.ServeHTTP(recorder, request)
 	log.Println(recorder.Code)
 	if recorder.Code != http.StatusNotFound {
@@ -42,7 +48,10 @@ func TestRequestValid(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	l := log.New(os.Stdout, "testing", log.LstdFlags)
 	request, _ := http.NewRequest("GET", "/order/ывы", nil)
-	server := NewServer(l)
+	server, err := NewServer(l)
+	if err != nil {
+		t.Fatalf("[TEST] error creating server")
+	}
 	server.Srv.Handler.ServeHTTP(recorder, request)
 	if recorder.Code != http.StatusNotFound {
 		t.Errorf("[TEST] http status is not OK, %v", recorder.Code)
