@@ -65,7 +65,6 @@ func main() {
 			l.Printf("Error adding order: %v with orderUID %v", err, Order.OrderUID)
 			return
 		}
-		log.Println("Got msg", msg.Data)
 		sc.Close()
 	}, stan.SetManualAckMode())
 	defer sub.Close()
