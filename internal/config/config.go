@@ -70,13 +70,13 @@ func InitNatsConfig(l *log.Logger) *NatsConfig {
 
 	subscriberID, exist := os.LookupEnv("NATS_SUBSCRIBER")
 	if !exist {
-		l.Println("couldn't find nats subscriber id using default order-subscriber")
+		l.Println("couldn't find nats subscriber id using default [order-subscriber]")
 		subscriberID = "order-subscriber"
 	}
 
 	subject, exist := os.LookupEnv("NATS_SUBJECT")
 	if !exist {
-		l.Println("couldn't find nats subject using default orders")
+		l.Println("couldn't find nats subject using default [orders]")
 		subject = "orders"
 	}
 

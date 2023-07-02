@@ -2,15 +2,26 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
-	"os"
 	"nats-streaming-service/internal/broker"
+	"nats-streaming-service/internal/config"
 	"nats-streaming-service/internal/model"
+	"os"
 )
 
 func main() {
-	sc, err := broker.ConnectToNats("test-cluster", "order-publisher")
+
+	l := log.New(os.Stdout, "nats-subscriber ", log.LstdFlags)
+	config := config.InitNatsConfig(l)
+
+	var n int
+
+	flag.IntVar(&n, "n", 1, "number of orders to publish")
+	flag.Parse()
+
+	sc, err := broker.ConnectToNats(config.ClusterID, config.PublsherID)
 	if err != nil {
 		log.Fatalf("Error connecting to nats %v", err)
 	}
@@ -24,37 +35,14 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error unmarshaling JSON: %v", err)
 	}
-	for i := 0; i < 10; i++ {
-		sendOrder.OrderUID = fmt.Sprintf("TEST2%d", i)
+	for i := 0; i < n; i++ {
+		sendOrder.OrderUID = fmt.Sprintf("order%d", i)
 		sendingData, err := json.Marshal(sendOrder)
 		if err != nil {
 			log.Fatalf("Error marshalling order %v", err)
 		}
-		if err = sc.Publish("testing", sendingData); err != nil {
+		if err = sc.Publish(config.Subject, sendingData); err != nil {
 			log.Fatalf("Error sending Order %v", err)
 		}
 	}
-
-	/*
-		modelJSON, err := os.ReadFile("model.json")
-		if err != nil {
-			log.Println(err)
-		}
-		var order model.Order
-		err = json.Unmarshal(modelJSON, &order)
-		if err != nil {
-			log.Println(err)
-		}
-		order.OrderUID = "TESTING"
-		data, err := json.Marshal(order)
-		if err != nil {
-			log.Println(err)
-		}
-
-		if err := pb.Publish("test-test", data); err != nil {
-			log.Println(err)
-		}
-
-		log.Printf("Published order with UID = %v", order.OrderUID)
-	*/
 }

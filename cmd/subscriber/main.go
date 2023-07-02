@@ -12,11 +12,13 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/nats-io/stan.go"
 )
 
 func main() {
 	l := log.New(os.Stdout, "nats-subscriber ", log.LstdFlags)
+	v := validator.New()
 	sc, err := broker.ConnectToNats("test-cluster", "order-subscriber")
 	if err != nil {
 		l.Println("Error connecting to Nats-streaming")
@@ -30,7 +32,6 @@ func main() {
 	if err != nil {
 		l.Printf("Got error init storage: %v", err)
 	}
-	l.Println("Connected to DB | ")
 	var Order model.Order
 	signalChan := make(chan os.Signal, 1)
 	cleanupDone := make(chan bool)
@@ -54,10 +55,16 @@ func main() {
 			l.Println(err)
 			return
 		}
+		if err = v.Struct(Order); err != nil {
+			l.Println("Error validating struct: ",err)
+			return
+		}
 		if err = srv.Cache.AddToStorage(&Order); err != nil {
 			l.Printf("Error adding order: %v with orderUID %v", err, Order.OrderUID)
 			return
 		}
+		log.Println("Got msg", msg.Data)
+		sc.Close()
 	}, stan.SetManualAckMode())
 	defer sub.Close()
 	go func() {

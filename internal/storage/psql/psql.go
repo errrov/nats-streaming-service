@@ -11,14 +11,6 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type ConnectionInfo struct {
-	User     string
-	Password string
-	Host     string
-	Port     string
-	Name     string
-}
-
 type Postgresql struct {
 	ConnectionString config.PostgresConfig
 	Db               *pgxpool.Pool
