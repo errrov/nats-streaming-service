@@ -52,7 +52,7 @@ type Payment struct {
 
 type Item struct {
 	ChrtId      int    `json:"chrt_id" validate:"required"`
-	TrackNumber string `json:"string" validate:"required"`
+	TrackNumber string `json:"track_number" validate:"required"`
 	Price       int    `json:"price" validate:"required"`
 	Rid         string `json:"rid" validate:"required"`
 	Name        string `json:"name" validate:"required"`
