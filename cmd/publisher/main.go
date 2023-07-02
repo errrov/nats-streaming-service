@@ -20,7 +20,7 @@ func main() {
 
 	flag.IntVar(&n, "n", 1, "number of orders to publish")
 	flag.Parse()
-
+	l.Println(n)
 	sc, err := broker.ConnectToNats(config.ClusterID, config.PublsherID)
 	if err != nil {
 		log.Fatalf("Error connecting to nats %v", err)
@@ -36,7 +36,8 @@ func main() {
 		log.Fatalf("Error unmarshaling JSON: %v", err)
 	}
 	for i := 0; i < n; i++ {
-		sendOrder.OrderUID = fmt.Sprintf("order%d", i)
+		sendOrder.OrderUID = fmt.Sprintf("testing-ordering%d", i)
+		log.Println(sendOrder.OrderUID)
 		sendingData, err := json.Marshal(sendOrder)
 		if err != nil {
 			log.Fatalf("Error marshalling order %v", err)

@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"nats-streaming-service/internal/broker"
 	"nats-streaming-service/internal/config"
@@ -27,7 +26,6 @@ func main() {
 		os.Exit(1)
 	}
 	defer sc.Close()
-	l.Println("Connected to NATS | ")
 	if err != nil {
 		log.Println(err)
 	}
@@ -65,12 +63,11 @@ func main() {
 			l.Printf("Error adding order: %v with orderUID %v", err, Order.OrderUID)
 			return
 		}
-		sc.Close()
 	}, stan.SetManualAckMode())
 	defer sub.Close()
 	go func() {
 		for range signalChan {
-			fmt.Printf("\nReceived an interrupt, unsubscribing and closing connection...\n\n")
+			l.Printf("\nReceived an interrupt, unsubscribing and closing connection...\n\n")
 			sc.Close()
 			srv.Srv.Shutdown(context.Background())
 			cleanupDone <- true
