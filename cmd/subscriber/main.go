@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"nats-streaming-service/internal/broker"
+	"nats-streaming-service/internal/config"
 	"nats-streaming-service/internal/model"
 	"nats-streaming-service/internal/server"
 	"os"
@@ -18,8 +19,9 @@ import (
 
 func main() {
 	l := log.New(os.Stdout, "nats-subscriber ", log.LstdFlags)
+	natsConfig := config.InitNatsConfig(l)
 	v := validator.New()
-	sc, err := broker.ConnectToNats("test-cluster", "order-subscriber")
+	sc, err := broker.ConnectToNats(natsConfig.ClusterID, natsConfig.SubscriberID)
 	if err != nil {
 		l.Println("Error connecting to Nats-streaming")
 		os.Exit(1)
@@ -46,7 +48,7 @@ func main() {
 			os.Exit(1)
 		}
 	}()
-	sub, _ := sc.Subscribe("testing", func(msg *stan.Msg) {
+	sub, _ := sc.Subscribe(natsConfig.Subject, func(msg *stan.Msg) {
 		if err := msg.Ack(); err != nil {
 			l.Println(err)
 			return
@@ -56,7 +58,7 @@ func main() {
 			return
 		}
 		if err = v.Struct(Order); err != nil {
-			l.Println("Error validating struct: ",err)
+			l.Println("Error validating struct: ", err)
 			return
 		}
 		if err = srv.Cache.AddToStorage(&Order); err != nil {
