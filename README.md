@@ -14,9 +14,9 @@ To run nats-streaming and postgreSQL
 
 ## Running subscriber
 
-- ``` go run ./cmd/subscriber/main.go```
+- ```go run ./cmd/subscriber/main.go```
 
     For publisher you can run
 
-- ``` go run ./cmd/publisher/main.go```
+- ```go run ./cmd/publisher/main.go```
 
