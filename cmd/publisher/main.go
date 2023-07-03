@@ -36,7 +36,7 @@ func main() {
 		l.Fatalf("Error unmarshaling JSON: %v", err)
 	}
 	for i := 0; i < n; i++ {
-		sendOrder.OrderUID = fmt.Sprintf("testing-ordering%d", i)
+		sendOrder.OrderUID = fmt.Sprintf("orders%d", i)
 		l.Println("Sent order with orderUID", sendOrder.OrderUID)
 		sendingData, err := json.Marshal(sendOrder)
 		if err != nil {
