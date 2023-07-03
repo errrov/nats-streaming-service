@@ -4,7 +4,10 @@ Nats-streaming service using ```gorilla/mux```, ```nats-streaming```, ```postgre
 
 ## Video demonstration
 
-https://github.com/errrov/nats-streaming-service/assets/79909234/73ed3fd2-c63d-4b0e-914f-1c81576605b1
+
+
+https://github.com/errrov/nats-streaming-service/assets/79909234/af4da905-c466-410c-9804-9300daad51e7
+
 
 ## Running nats-streaming and postgreSQL
 
