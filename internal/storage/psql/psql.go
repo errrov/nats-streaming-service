@@ -38,10 +38,6 @@ func Connect(l *log.Logger) (*Postgresql, error) {
 	if err != nil {
 		return nil, err
 	}
-	// err = newPsqlconnection.EnsureTableDropped()
-	// if err != nil {
-	// 	return nil, err
-	// }
 	err = newPsqlconnection.EnsureTableExists()
 	if err != nil {
 		return nil, err
@@ -56,11 +52,6 @@ func (d *Postgresql) EnsureTableExists() error {
 	)`)
 	return err
 }
-
-// func (d *Postgresql) EnsureTableDropped() error {
-// 	_, err := d.Db.Exec(context.Background(), `DROP TABLE orders`)
-// 	return err
-// }
 
 func (d *Postgresql) InsertOrder(order *model.Order) error {
 	orderQueue := `INSERT INTO ORDERS VALUES ($1, $2)`
