@@ -90,6 +90,5 @@ func (d *Postgresql) FindAll() (map[string]*model.Order, error) {
 		rows.Scan(&uid, &searchOrder)
 		orders[uid] = &searchOrder
 	}
-	log.Println(orders)
 	return orders, nil
 }

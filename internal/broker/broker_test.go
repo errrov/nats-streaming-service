@@ -21,3 +21,4 @@ func TestConnection(t *testing.T) {
 		t.Errorf("Not connected %v", sub.Conn.NatsConn().Status())
 	}
 }
+
