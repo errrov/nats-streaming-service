@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple orders page</title>
+  </head>
+  <body>
+    OrderUID: {{.OrderUID}} <br>
+    Track Number: {{.TrackNumber}} <br>
+    Entry: {{.Entry}} <br>
+    Delivery: <br>
+    &emsp;Name: {{.Delivery.Name}}<br>
+    &emsp;Phone: {{.Delivery.Phone}}<br>
+    &emsp;Zip: {{.Delivery.Zip}}<br>
+    &emsp;City: {{.Delivery.City}}<br>
+    &emsp;Address: {{.Delivery.Address}}<br>
+    &emsp;Region: {{.Delivery.Region}}<br>
+    &emsp;Email: {{.Delivery.Email}}<br>
+    Payment: <br>
+    &emsp;Transaction: {{.Payment.Transaction}}<br>
+    &emsp;RequestID: {{.Payment.RequestID}}<br>
+    &emsp;Currency: {{.Payment.Currency}}<br>
+    &emsp;Provider: {{.Payment.Provider}}<br>
+    &emsp;Amount: {{.Payment.Amount}}<br>
+    &emsp;PaymentDT: {{.Payment.PaymentDT}}<br>
+    &emsp;Bank: {{.Payment.Bank}}<br>
+    &emsp;DeliveryCost: {{.Payment.DeliveryCost}}<br>
+    &emsp;GoodsTotal: {{.Payment.GoodsTotal}}<br>
+    &emsp;CustomFee: {{.Payment.CustomFee}}<br>
+    Items: <br>
+    {{range .Items}}
+    &emsp;ChrtId: {{.ChrtId}}<br>
+    &emsp;TrackNumber: {{.TrackNumber}}<br>
+    &emsp;Price: {{.Price}}<br>
+    &emsp;Rid: {{.Rid}}<br>
+    &emsp;Name: {{.Name}}<br>
+    &emsp;Sale: {{.Sale}}<br>
+    &emsp;Size: {{.Size}}<br>
+    &emsp;TotalPrice: {{.TotalPrice}}<br>
+    &emsp;NmID: {{.NmID}}<br>
+    &emsp;Brand: {{.Brand}}<br>
+    &emsp;Status: {{.Status}}<br>
+    <br>
+    {{end}}
+    Locale: {{.Locale}}<br>
+    InternalSignature: {{.InternalSignature}}<br>
+    CustomerID: {{.CustomerID}}<br>
+    DeliveryService: {{.DeliveryService}}<br>
+    Shardkey: {{.Shardkey}}<br>
+    SmID: {{.SmID}}<br>
+    DateCreated: {{.DateCreated}}<br>
+    OofShard: {{.OofShard}}<br>
+  </body>
+</html>

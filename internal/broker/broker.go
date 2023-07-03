@@ -48,8 +48,8 @@ func CreateSubscriber(s *storage.Storage, l *log.Logger) (*Subscriber, error) {
 }
 
 func (s *Subscriber) Subscribe() error {
-	var Order model.Order
 	_, err := s.Conn.Subscribe(s.NatsConf.Subject, func(msg *stan.Msg) {
+		var Order model.Order
 		if err := msg.Ack(); err != nil {
 			s.l.Println(err)
 			return

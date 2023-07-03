@@ -1,7 +1,6 @@
 package server
 
 import (
-	"encoding/json"
 	"log"
 	"nats-streaming-service/internal/model"
 	"nats-streaming-service/internal/storage"
@@ -39,18 +38,13 @@ func NewServer(l *log.Logger) (*Server, error) {
 func (s *Server) SetupHandlers() *mux.Router {
 	sm := mux.NewRouter()
 	getOrderByUID := sm.Methods(http.MethodGet).Subrouter()
-	getOrderByUID.Path("/order").Queries("orderUID", "{orderUID}").HandlerFunc(s.HandleUIDSearch)
-	getOrderByUID.HandleFunc("/order", s.getOrderPage)
+	getOrderByUID.HandleFunc("/order/{orderUID:[a-zA-Z0-9-]+}", s.HandleUIDSearch)
 	return sm
 }
 
-func (s *Server) getOrderPage(rw http.ResponseWriter, r *http.Request) {
-	s.logger.Println("Handling orders page")
-	tmp := template.Must(template.ParseFiles("./web/static/orders.html"))
-	tmp.Execute(rw, "Hello data")
-}
-
 func (s *Server) HandleUIDSearch(rw http.ResponseWriter, r *http.Request) {
+	s.logger.Println("inside UID search")
+	view := template.Must(template.ParseFiles("./web/static/foundorder.html"))
 	vars := mux.Vars(r)
 	var uid string
 	uid, ok := vars["orderUID"]
@@ -61,15 +55,13 @@ func (s *Server) HandleUIDSearch(rw http.ResponseWriter, r *http.Request) {
 	}
 	order, err := s.Cache.FindByUID(uid)
 	if err == model.ErrNotFound {
-		http.Error(rw, "Error finding uid in memchache", http.StatusNotFound)
+		notFound := template.Must(template.ParseFiles("./web/static/notfound.html"))
+		notFound.Execute(rw, order)
 		return
 	}
 	if err != nil {
 		http.Error(rw, "Error finding Order", http.StatusInternalServerError)
 		return
 	}
-
-	rw.Header().Set("Content-Type", "application/json")
-	rw.WriteHeader(http.StatusOK)
-	json.NewEncoder(rw).Encode(*order)
+	view.Execute(rw, order)
 }

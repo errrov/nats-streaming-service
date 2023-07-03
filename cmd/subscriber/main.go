@@ -8,14 +8,13 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-
 )
 
 func main() {
 	l := log.New(os.Stdout, "nats-subscriber ", log.LstdFlags)
 	srv, err := server.NewServer(l)
 	if err != nil {
-		l.Println("Error creating server")
+		l.Println("Error creating server", err)
 		os.Exit(1)
 	}
 	sc, err := broker.CreateSubscriber(srv.Cache, l)

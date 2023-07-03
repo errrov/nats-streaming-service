@@ -37,7 +37,7 @@ func main() {
 	}
 	for i := 0; i < n; i++ {
 		sendOrder.OrderUID = fmt.Sprintf("testing-ordering%d", i)
-		l.Println(sendOrder.OrderUID)
+		l.Println("Sent order with orderUID", sendOrder.OrderUID)
 		sendingData, err := json.Marshal(sendOrder)
 		if err != nil {
 			l.Fatalf("Error marshalling order %v", err)
