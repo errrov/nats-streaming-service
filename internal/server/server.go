@@ -43,7 +43,6 @@ func (s *Server) SetupHandlers() *mux.Router {
 }
 
 func (s *Server) HandleUIDSearch(rw http.ResponseWriter, r *http.Request) {
-	s.logger.Println("inside UID search")
 	view := template.Must(template.ParseFiles("./web/static/foundorder.html"))
 	vars := mux.Vars(r)
 	var uid string
